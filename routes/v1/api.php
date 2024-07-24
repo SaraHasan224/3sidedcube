@@ -38,6 +38,8 @@ Route::post('register', [AuthController::class, "register"]);
 
 Route::get('customer', [CustomerController::class, 'getCustomer'])->middleware(['tokenValidation']);
 
+Route::get('/all-post',  [PostController::class, 'getAllPosts']);
+
 Route::middleware(['tokenValidation'])->group(function () {
 
     Route::get('/all-posts',  [PostController::class, 'getAllPosts']);

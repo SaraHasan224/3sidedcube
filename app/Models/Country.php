@@ -15,6 +15,8 @@ class Country extends Model
     protected $table = 'countries';
     protected $primaryKey = 'id';
 
+    protected $fillable = ['name', 'code'];
+
     public function getNameAttribute($val)
     {
         return ucwords($val);
