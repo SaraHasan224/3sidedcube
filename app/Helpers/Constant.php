@@ -68,11 +68,14 @@ class Constant
     const POST_STATUS = [
         "InActive" => 0,
         "Active" => 1,
-        "Blocked" => 2
+        "Blocked" => 2,
+        "Scheduled" => 3,
     ];
     const POST_STATUS_STYLE = [
-        0 => "danger",
-        1 => "success"
+        0 => "warning",
+        1 => "success",
+        2 => "danger",
+        3 => "primary"
     ];
     const CUSTOMER_SUBSCRIPTION_STATUS = [
         "enabled" => 1,
