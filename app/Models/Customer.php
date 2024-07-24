@@ -37,7 +37,6 @@ class Customer extends Authenticatable
         'phone_number',
         'country_id',
         'status',
-        'subscription_status',
         'identifier',
         'last_login',
         'login_attempts',
@@ -65,12 +64,6 @@ class Customer extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-
-    public function closet()
-    {
-        return $this->belongsTo(Closet::class, 'id', 'customer_id');
-    }
-
     public function country()
     {
         return $this->hasOne(Country::class, 'id', 'country_id');
@@ -78,21 +71,15 @@ class Customer extends Authenticatable
 
     public static $validationRules = [
         'register' => [
-            'country' => 'required|string',
-            'email_address' => 'required|email|email:rfc,dns|unique:post,email',
+            'country' => 'required|string|exists:countries,code',
+            'email_address' => 'required|email|email:rfc,dns|unique:customers,email',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'password' => 'required|string|min:6|confirmed',
-            'subscription' => 'required|boolean',
         ],
         'login' => [
             'email_address' => 'required|email|email:rfc,dns',
             'password' => 'required|string',
-        ],
-        'create-closet' => [
-            'name' => 'required|string|max:255',
-            'logo' => 'required',
-            'banner' => 'required'
         ],
     ];
 
@@ -117,9 +104,6 @@ class Customer extends Authenticatable
                     'regex:/^[0-9]+$/'
                 ],
                 'password' => 'same:confirm-password',
-            ],
-            'update-closet' => [
-                'name' => 'required|string|max:255',
             ]
         ];
 
@@ -155,15 +139,6 @@ class Customer extends Authenticatable
             ->where('phone_number',$phone)
             ->first();
     }
-
-    public static function findNonAnonymousCustomerByOtp( $otp )
-    {
-        return self::where('country_code', $otp->country_code)
-            ->where('phone_number', $otp->phone_number)
-            ->whereNull('deleted_at')
-            ->first();
-    }
-
 
     public static function removeCustomer( $customer_id )
     {
@@ -203,7 +178,7 @@ class Customer extends Authenticatable
 
     public static function getByFilters($filter)
     {
-        $data = self::select('id', 'first_name', 'last_name', 'username', 'email', 'email_verified_at', 'country_code', 'phone_number', 'phone_verified_at', 'country_id', 'identifier', 'last_login', 'status',  'subscription_status', 'created_at','updated_at','deleted_at');
+        $data = self::select('id', 'first_name', 'last_name', 'username', 'email', 'email_verified_at', 'country_code', 'phone_number', 'phone_verified_at', 'country_id', 'identifier', 'last_login', 'status', 'created_at','updated_at','deleted_at');
         $data = $data->withTrashed()->orderBy('id', 'DESC');
 
         if (count($filter))
@@ -239,11 +214,6 @@ class Customer extends Authenticatable
             if (isset($filter['status']))
             {
                 $data = $data->where('status', $filter['status']);
-            }
-
-            if (isset($filter['subscription_status']))
-            {
-                $data = $data->where('subscription_status', $filter['subscription_status']);
             }
         }
 

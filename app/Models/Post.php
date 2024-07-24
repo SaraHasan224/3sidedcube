@@ -11,22 +11,27 @@ class Post extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['title', 'content', 'status'];
+    protected $fillable = ['title', 'content', 'author', 'status'];
 
 
     public static $validationRules = [];
 
     public static function getValidationRules($type, $params = [])
     {
+        $postId = array_key_exists('post_id', $params) ? $params['post_id'] : '';
         $rules = [
             'create'        => [
-                'title'  => 'required|max:255|string',
+                'title'  => 'required|max:255|string|unique:posts,title',
                 'author' => 'required|max:255|string',
                 'content' => 'required',
             ],
             'update'        => [
-                'name'     => 'required',
-                'author' => 'required',//|unique:users,email,' . $user_id,
+                'title'  => 'required|max:255|string|unique:posts,title,'. $postId,
+                'author' => 'required|max:255|string',
+                'content' => 'required'
+            ],
+            'delete'        => [
+                'id'  => 'required|numeric|exists:posts,id',
             ],
         ];
 
@@ -117,5 +122,46 @@ class Post extends Model
             'offset'  => isset($filter['start']) ? $filter['start'] : 0,
             'records' => $data->get()
         ];
+    }
+
+    public static function deleteRecord($requestData)
+    {
+        self::where('id', $requestData['id'])->delete();
+    }
+
+    /*
+     * API
+     **/
+
+
+    public static function getPostsListing($perPage = "", $disablePagination = false)
+    {
+        $fields = [
+            'id', 'author', 'title', 'content', 'status', 'created_at','updated_at','deleted_at'
+        ];
+        $query = self::select($fields)->where('status', Constant::Yes)->where('deleted_at', Null);
+
+        $postsList = $query->paginate($perPage);
+
+        $closetTransformed = $postsList
+            ->getCollection()
+            ->map(function ($item) {
+                unset($item->id);
+                return $item;
+            })->toArray();
+        if($disablePagination) {
+            return $closetTransformed;
+        }
+        return new \Illuminate\Pagination\LengthAwarePaginator(
+            $closetTransformed,
+            $postsList->total(),
+            $postsList->perPage(),
+            $postsList->currentPage(), [
+                'path' => \Request::url(),
+                'query' => [
+                    'page' => $postsList->currentPage()
+                ]
+            ]
+        );
     }
 }

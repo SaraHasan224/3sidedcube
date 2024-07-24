@@ -17,7 +17,7 @@ class CustomerSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('post')->truncate();
+        DB::table('customers')->truncate();
 
         $country = Country::getCountryByCountryCode("PK");
 
@@ -30,7 +30,6 @@ class CustomerSeeder extends Seeder
             'phone_number' => "3452099689",
             'country_id' => $country->id,
             'status' => Constant::Yes,
-            'subscription_status' => Constant::Yes,
             'identifier' => v4(),
             'login_attempts' => Constant::No,
         ]);

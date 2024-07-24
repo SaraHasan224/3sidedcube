@@ -1,0 +1,414 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Puraani Jeans APIs",
+        "description": "Puraani Jeans API documentation",
+        "contact": {
+            "email": "developer@puranijeans.com"
+        },
+        "license": {
+            "name": "Apache 2.0"
+        },
+        "version": ""
+    },
+    "servers": [
+        {
+            "url": "http://3sidedcube.test",
+            "description": "local"
+        }
+    ],
+    "paths": {
+        "/v1/register": {
+            "post": {
+                "tags": [
+                    "Register"
+                ],
+                "summary": "User Register",
+                "description": "User Register here",
+                "operationId": "Register",
+                "requestBody": {
+                    "description": "User Register",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "country": {
+                                        "description": "country",
+                                        "type": "number",
+                                        "example": ""
+                                    },
+                                    "email_address": {
+                                        "description": "email address",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "first_name": {
+                                        "description": "email_address",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "last_name": {
+                                        "description": "email_address",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "password": {
+                                        "description": "email_address",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "password_confirmation": {
+                                        "description": "email_address",
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Register Successfully"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/v1/login": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "User Login",
+                "description": "Login User Here",
+                "operationId": "authLogin",
+                "requestBody": {
+                    "description": "User Register",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email_address": {
+                                        "description": "email address",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "password": {
+                                        "description": "email_address",
+                                        "type": "string",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Register Successfully"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                }
+            }
+        },
+        "/v1/customer": {
+            "get": {
+                "tags": [
+                    "Customer"
+                ],
+                "summary": "Get meta data content",
+                "operationId": "getCustomer",
+                "responses": {
+                    "200": {
+                        "description": "messages.general.success"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "400": {
+                        "description": "messages.general.failed"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "user_access_token": []
+                    }
+                ]
+            }
+        },
+        "/v1/all-posts": {
+            "get": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Manage Posts",
+                "operationId": "getAllPosts",
+                "responses": {
+                    "200": {
+                        "description": "messages.general.success"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "400": {
+                        "description": "messages.general.failed"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "user_access_token": []
+                    }
+                ]
+            }
+        },
+        "/v1/post/{id}": {
+            "get": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "get post details",
+                "operationId": "getPostDetails",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "user_access_token": []
+                    }
+                ]
+            }
+        },
+        "/v1/post/add": {
+            "post": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Add New Post",
+                "operationId": "addPost",
+                "requestBody": {
+                    "description": "Add New Post",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "author": {
+                                        "description": "author name",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "title": {
+                                        "description": "Title",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "content": {
+                                        "description": "Content for the post",
+                                        "type": "string",
+                                        "example": null
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "messages.general.success"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "400": {
+                        "description": "messages.general.failed"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "user_access_token": []
+                    }
+                ]
+            }
+        },
+        "/v1/post/edit/{id}": {
+            "post": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Edit Post",
+                "operationId": "editPost",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Edit Post",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "author": {
+                                        "description": "author name",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "title": {
+                                        "description": "Title",
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "content": {
+                                        "description": "Content for the post",
+                                        "type": "string",
+                                        "example": null
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "messages.general.success"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "400": {
+                        "description": "messages.general.failed"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "user_access_token": []
+                    }
+                ]
+            }
+        },
+        "/v1/post/delete/{id}": {
+            "post": {
+                "tags": [
+                    "Post"
+                ],
+                "summary": "Delete Post",
+                "operationId": "deletePost",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Delete Post",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "id": {
+                                        "description": "post id",
+                                        "type": "object",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "messages.general.success"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    },
+                    "400": {
+                        "description": "messages.general.failed"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "user_access_token": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "user_access_token": {
+                "type": "apiKey",
+                "description": "user access token",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Register",
+            "description": "Register"
+        },
+        {
+            "name": "Login",
+            "description": "Login"
+        },
+        {
+            "name": "Customer",
+            "description": "Customer"
+        },
+        {
+            "name": "Post",
+            "description": "Post"
+        }
+    ]
+}

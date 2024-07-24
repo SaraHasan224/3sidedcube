@@ -115,13 +115,10 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         // Check if the incoming request is valid...
         $requestData = $request->all();
-        $requestData['phone'] = isset($requestData['phone']) ?
-            str_replace("-", "", $request->phone) : null;
 
-        $validationRule = Customer::getValidationRules('updateUser', $requestData);
+        $validationRule = Customer::getValidationRules('update', $requestData);
         $validator = Validator::make($requestData, $validationRule);
         if ($validator->fails())
         {
@@ -257,21 +254,18 @@ class PostController extends Controller
 
             if ($validationErrors)
             {
-                return ResponseHandler::validationError($validationErrors);
+                return ApiResponseHandler::validationError($validationErrors);
             }
             if ($requestData['action'] == 'delete')
             {
-                Customer::deleteRecords($requestData);
+                Post::deleteRecords($requestData);
+                return ApiResponseHandler::success([], __('messages.posts.deleted'));
             }
-            else
-            {
-                Customer::updateRecords( $requestData);
-            }
-            return ResponseHandler::success([], __('messages.products.deleted'));
+            return ApiResponseHandler::success([]);
         }
         catch (\Exception $e)
         {
-            return ResponseHandler::serverError($e);
+            return ApiResponseHandler::serverError($e);
         }
     }
 }

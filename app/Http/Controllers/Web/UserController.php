@@ -284,7 +284,7 @@ class UserController extends Controller
             }
             User::deleteAccount($requestData);
             $return['type'] = 'success';
-            $return['message'] = __('messages.products.deleted');
+            $return['message'] = __('messages.posts.deleted');
             return ApiResponseHandler::success($return);
         } catch (\Exception $e) {
             $return['type'] = 'errors';

@@ -22,43 +22,28 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     * path="/api/register",
+     * path="/v1/register",
      * operationId="Register",
      * tags={"Register"},
      * summary="User Register",
      * description="User Register here",
      *     @OA\RequestBody(
-     *         @OA\JsonContent(),
+     *         description="User Register",
      *         @OA\MediaType(
-     *            mediaType="multipart/form-data",
-     *            @OA\Schema(
-     *               type="object",
-     *               required={"country","email_address","first_name","last_name", "password", "password_confirmation"},
-     *               @OA\Property(property="country", type="numeric"),
-     *               @OA\Property(property="email_address", type="email"),
-     *               @OA\Property(property="first_name", type="text"),
-     *               @OA\Property(property="last_name", type="text"),
-     *               @OA\Property(property="password", type="password"),
-     *               @OA\Property(property="password_confirmation", type="password"),
-     *               @OA\Property(property="subscription", type="boolean"),
-     *            ),
-     *        ),
-     *    ),
-     *      @OA\Response(
-     *          response=201,
-     *          description="Register Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Register Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=422,
-     *          description="Unprocessable Entity",
-     *          @OA\JsonContent()
-     *       ),
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 @OA\Property(property="country", description="country", type="number", example=""),
+     *                 @OA\Property(property="email_address", description="email address", type="string", example=""),
+     *                 @OA\Property(property="first_name", description="email_address", type="string", example=""),
+     *                 @OA\Property(property="last_name", description="email_address", type="string", example=""),
+     *                 @OA\Property(property="password", description="email_address", type="string", example=""),
+     *                 @OA\Property(property="password_confirmation", description="email_address", type="string", example=""),
+     *              )
+     *         )
+     *     ),
+     *      @OA\Response(response=200, description="Register Successfully"),
+     *      @OA\Response(response=422, description="Unprocessable Entity"),
      *      @OA\Response(response=400, description="Bad request"),
      *      @OA\Response(response=404, description="Resource Not Found"),
      * )
@@ -94,38 +79,24 @@ class AuthController extends Controller
     }
     /**
      * @OA\Post(
-     * path="/api/login",
+     * path="/v1/login",
      * operationId="authLogin",
      * tags={"Login"},
      * summary="User Login",
      * description="Login User Here",
      *     @OA\RequestBody(
-     *         @OA\JsonContent(),
+     *         description="User Register",
      *         @OA\MediaType(
-     *            mediaType="multipart/form-data",
-     *            @OA\Schema(
-     *               type="object",
-     *               required={"email", "password"},
-     *               @OA\Property(property="email", type="email"),
-     *               @OA\Property(property="password", type="password")
-     *            ),
-     *        ),
-     *    ),
-     *      @OA\Response(
-     *          response=201,
-     *          description="Register Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Register Successfully",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=422,
-     *          description="Unprocessable Entity",
-     *          @OA\JsonContent()
-     *       ),
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 @OA\Property(property="email_address", description="email address", type="string", example=""),
+     *                 @OA\Property(property="password", description="email_address", type="string", example=""),
+     *              )
+     *         )
+     *     ),
+     *      @OA\Response(response=200, description="Register Successfully"),
+     *      @OA\Response(response=422, description="Unprocessable Entity"),
      *      @OA\Response(response=400, description="Bad request"),
      *      @OA\Response(response=404, description="Resource Not Found"),
      * )
@@ -149,10 +120,8 @@ class AuthController extends Controller
             return ApiResponseHandler::failure(__('Customer blocked'));
         }else {
             if (Hash::check($requestData['password'], $customer->password)) {
-                $closet = Closet::findByCustomerId($customer->id);
                 AccessToken::revokeOldTokensByName($customer->identifier);
                 $response['token'] = $customer->createToken($customer->identifier, ['customer'])->accessToken;
-                $response['screen'] = $this->appScreen($customer);
                 $response['customer'] = [
                     'first_name' => $customer->first_name,
                     'last_name' => $customer->last_name,
@@ -161,8 +130,6 @@ class AuthController extends Controller
                     'phone_number' => $customer->phone_number,
                     'country_id' => $customer->country_id,
                     'identifier' => $customer->identifier,
-                    'closet_ref' => optional($closet)->closet_reference,
-                    'closet' => $closet,
                 ];
                 return ApiResponseHandler::success($response, "You have successfully registered to " . env('APP_NAME') . ".");
             }else {
@@ -170,14 +137,5 @@ class AuthController extends Controller
             }
         }
 
-    }
-
-    private function appScreen($customer) {
-        if(empty($customer->country_code) && empty($customer->country_code)) {
-            return "phone";
-        }else if(empty($customer->phone_verified_at)) {
-            return "otp";
-        }
-        return "login";
     }
 }

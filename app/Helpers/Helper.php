@@ -67,54 +67,6 @@ class Helper
         return (string) $randString."_".strtolower($slug);
     }
 
-    public static function isImageValid($url,$image_placeholder = ""){
-        $image = $image_placeholder;
-        // Remove all illegal characters from a url
-        $image_url = filter_var($url, FILTER_SANITIZE_URL);
-
-        // Validate url
-        if (filter_var($image_url, FILTER_VALIDATE_URL)) {
-            $url = trim( $image_url );
-            $image = ( strpos( $url, 'http://' ) === 0 || strpos( $url, 'https://' ) === 0 ) &&
-                filter_var(
-                    $url,
-                    FILTER_VALIDATE_URL
-//                    FILTER_FLAG_SCHEME_REQUIRED  || FILTER_FLAG_HOST_REQUIRED
-                ) !== false && Helper::isUrlValid($url) ? $url : $image_placeholder;
-        }
-        return $image;
-    }
-
-    public static function isUrlValid( $url)
-    {
-        $result = false;
-        try{
-            list($status) = get_headers($url);
-            $headers = @get_headers($url);
-            if (strpos($status, '404') !== FALSE) {
-                $result = false;
-            }
-            else
-            {
-                $result= true;
-            }
-        }catch( \Exception $e)
-        {
-            $result = false;
-        } finally {
-            return $result;
-        }
-    }
-
-    public static function convertMinuteIntoMilliseconds($minutes)
-    {
-        $value = "{$minutes}:00";
-
-        list($minutes, $seconds) = explode(':', $value);
-
-        return $seconds * 1000 + $minutes * 60000;
-    }
-
     public static function getUserIP($request)
     {
         $ip = null;
@@ -129,7 +81,6 @@ class Helper
 
         return explode(',', $ip)[0];
     }
-
 
     public static function obfuscateString($str)
     {
@@ -158,77 +109,6 @@ class Helper
           ->setTimezone($localTimeZone)
           ->format('F d, Y');
 //        ->format('d M Y h:i  A');
-    }
-
-
-
-    static function getProductImagePlaceholder(){
-        return  asset('images/placeholders/product.jpg');
-    }
-
-
-    static function callApi($endPoint, $requestData, $merchantAppCreds, $headers=[], $logException = true)
-    {
-        $http = new Client();
-
-        $parameters["headers"] = $headers;
-
-            if(array_key_exists('client_id', $merchantAppCreds)) {
-                $clientIdHeader = $merchantAppCreds['client_id'];
-                if(array_key_exists('store_slug', $merchantAppCreds)){
-                    $clientIdHeader = $merchantAppCreds['client_id'].':'.$merchantAppCreds['store_slug'];
-                }
-//            $parameters["headers"]["Authorization"] = 'Bearer  ' . $merchantAccessToken['access_token'];
-                $parameters["headers"]["x-client-id"] = base64_encode($clientIdHeader);
-                $parameters["headers"]["x-client-token"] = base64_encode($merchantAppCreds['client_secret']);
-            }
-
-            $parameters["form_params"] = $requestData;
-
-            try
-            {
-                $response = $http->post($endPoint, $parameters);
-                return json_decode((string)$response->getBody(), true);
-            }
-            catch (RequestException $e)
-            {
-                if( $logException )
-                {
-                    AppException::log($e);
-                }
-
-                if ($e->hasResponse())
-                {
-                    $response = json_decode($e->getResponse()->getBody(), true);
-                    $message = isset($response['message']) ? $response['message'] : '';
-                    $status = $e->getResponse()->getStatusCode();
-                    return ['error' => true, 'message' => $message, 'status' => $status];
-                }
-            }
-    }
-
-    public static function getImgixImage($image, $withAssetPath=true, $width="", $height = "")
-    {
-        if(empty($image))
-        {
-            return "";
-        }
-        else
-        {
-            $basePath = (($withAssetPath) ? env('ASSETS_BASE_PATH',) : env('IMGIX_BASE_PATH','https://bsecure-dev-images.imgix.net'));
-            $imageUrl = $basePath.'/'.$image.'?auto=compress';
-
-            if($width != "")
-            {
-                $imageUrl .= "&w=$width";
-            }
-            if($height != "")
-            {
-                $imageUrl .= "&h=$height";
-            }
-
-            return $imageUrl;
-        }
     }
 
     public static function moveToTop(&$array, $key) {
@@ -278,11 +158,6 @@ class Helper
         ];
     }
 
-    public static function getMerchantDirectory($merchant_id, $type)
-    {
-        return env($type) . "/$merchant_id/";
-    }
-
     public static function formatNumber($number, $decimals = 2)
     {
         return (float)number_format((float)$number, $decimals, '.', '');
@@ -308,41 +183,6 @@ class Helper
         else
         {
             return false;
-        }
-    }
-
-    static function uploadFileToApp($file, $fileName, $filePath) {
-        if (!File::exists(public_path($filePath))) {
-            File::makeDirectory(public_path($filePath), 0775, true);
-        }
-
-        list($mime, $data)   = explode(';', $file);
-        list(, $data)       = explode(',', $data);
-        $data = base64_decode($data);
-
-        $mime = explode(':',$mime)[1];
-        $ext = explode('/',$mime)[1];
-        $savePath = $filePath.$fileName.'.'.$ext;
-
-        file_put_contents(public_path().'/'.$savePath, $data);
-        return $savePath;
-    }
-
-    static function getMimeType($imagedata)
-    {
-        $pos  = strpos($imagedata, ';');
-        $type = explode(':', substr($imagedata, 0, $pos))[1];
-        return $type;
-    }
-
-    static function convertUrlToDataURI($image) {
-        return base64_encode(file_get_contents($image));
-    }
-
-    function base64_encode_image($filename,$filetype) {
-        if ($filename) {
-            $imgbinary = fread(fopen($filename, "r"), filesize($filename));
-            return 'data:image/' . $filetype . ';base64,' . base64_encode($imgbinary);
         }
     }
 }
