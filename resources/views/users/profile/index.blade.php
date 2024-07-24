@@ -20,9 +20,6 @@
             <div class="app-inner-layout__content main-card mb-3  card">
                 @include('users.profile.common.profile')
             </div>
-            <div class="app-inner-layout__sidebar card">
-                @include('users.profile.common.sidebar')
-            </div>
         </div>
     </div>
 @endsection

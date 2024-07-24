@@ -17,8 +17,6 @@ class Constant
     const USER_TYPES = [
         'Super-Admin' => 0,
         'Admin'       => 1,
-        'Closet'      => 2,
-        'Customer'    => 3,
     ];
     const USER_TYPES_STYLE = [
         0 => "primary",

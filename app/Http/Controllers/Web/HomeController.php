@@ -36,7 +36,7 @@ class HomeController extends Controller
             $userStatus = Constant::USER_STATUS;
             $params['stats'] = [
                 'user_count' => DB::table('users')->where('status', Constant::USER_STATUS['Active'])->whereNull('deleted_at')->count(),
-                'customer_count' => Post::where('status', Constant::POST_STATUS['Active'])->whereNull('deleted_at')->count(),
+                'post_count' => Post::where('status', Constant::POST_STATUS['Active'])->whereNull('deleted_at')->count(),
                 'closet_count' => 0,//DB::table('closets')->count(),
                 'products_sold' => "$3M",
                 't_complains' => "1896",

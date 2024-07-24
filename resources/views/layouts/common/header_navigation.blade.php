@@ -59,7 +59,7 @@
                                                                  alt="">
                                                         </div>
                                                         <div class="widget-content-left">
-                                                            <div class="widget-heading">Alina Mcloughlin
+                                                            <div class="widget-heading"> {{\Illuminate\Support\Facades\Auth::user()->name}}
                                                             </div>
                                                             <div class="widget-subheading opacity-8">A short profile
                                                                 description
@@ -105,7 +105,7 @@
                         </div>
                         <div class="widget-content-left  ml-3 header-user-info d-none">
                             <div class="widget-heading">
-                                Alina Mclourd
+                                {{ \Illuminate\Support\Facades\Auth::user()->name }}
                             </div>
                             <div class="widget-subheading">
                                 VP People Manager

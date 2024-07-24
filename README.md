@@ -35,6 +35,9 @@ cd into the project directory via terminal and run the following  command to ins
 ### Dashboard
 My application dashboard  `http://localhost:8000/`
 
+### Registration
+My application registration  `http://localhost:8000/register`
+
 ### Swagger documentation
 Swagger documentation  `http://localhost:8000/api/documentation`
 

@@ -62,19 +62,6 @@
                                             >
                                         </div>
 
-                                        <div class="form-group">
-                                            <label>Password *</label>
-                                            <input
-                                                    type="password"
-                                                    name="password"
-                                                    maxlength="100"
-                                                    placeholder="*****"
-                                                    class="form-control"
-                                                    value="{{ !empty(old('password')) ? old('password') : '' }}"
-                                                    required
-                                            >
-                                        </div>
-
                                         <div class="form-group profileMobileNo">
                                             <label class="col-12">Mobile no *</label>
                                             <input

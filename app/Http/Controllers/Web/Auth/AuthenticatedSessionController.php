@@ -61,10 +61,6 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->back()->with('error', __('messages.user.invalid_access_forbidden'))->withInput();
             }
             User::setUsersLoginAttempts($user->id, 0);
-            //Sms: Admin Sign in
-            //User::sendOtp($user, $otp, 'signin');
-            //Email: Admin Sign in
-            //EmailHandler::merchantSignin_upEmail($user, $otp, 'signin');
             return redirect()->route('dashboard');
         }
         else
@@ -89,7 +85,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->back()->with('error', __('messages.user.email_not_exists'))->withInput();
         }
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->intended(RouteServiceProvider::DASHBOARD_HOME);
     }
 
     /**

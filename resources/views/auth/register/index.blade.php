@@ -31,7 +31,7 @@
                                                 <strong></strong> {{ session('error') }}
                                             </div>
                                         @endif
-                                        @if (count($errors) > 0)
+                                        @if (isset($errors) && count($errors) > 0)
                                             <div class="col-12 alert alert-danger">
                                                 <ul>
                                                     @foreach ($errors->all() as $error)

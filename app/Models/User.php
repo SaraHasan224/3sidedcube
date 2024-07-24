@@ -82,7 +82,6 @@ class User extends Authenticatable
                 'password' => 'required|max:30',
                 'phone' => [
                     'required',
-                    'regex:/^[0-9]+$/'
                 ],
             ],
             'updateUser'        => [
@@ -91,9 +90,7 @@ class User extends Authenticatable
                 'phone'    => [
                     'required',
                     'string',
-                    'regex:/^[0-9]+$/'
                 ],
-                'password' => 'same:confirm-password',
             ],
             'updateUserProfile' => [
                 'name'         => 'required',
@@ -172,7 +169,6 @@ class User extends Authenticatable
     {
         $data = self::select('id', 'name', 'email', 'country_code', 'phone_number', 'user_type', 'login_attempts', 'last_login', 'status', 'created_at','updated_at','deleted_at');
         $data = $data->orderBy('id', 'DESC');
-
         if (count($filter))
         {
             if (!empty($filter['name']))
@@ -192,23 +188,16 @@ class User extends Authenticatable
                 $data = $data->where('email', 'LIKE', '%' . trim($filter['email']) . '%');
             }
 
-            if (!empty($filter['last_login']))
-            {
-                $memberSince = trim($filter['last_login']);
-                $data = $data->whereDate('last_login', '>=', date('Y-m-d', strtotime($memberSince)));
-            }
-
             if (isset($filter['status']))
             {
                 $data = $data->where('status', $filter['status']);
             }
         }
-
         $count = $data->count();
 
 //        if (isset($filter['start']) && isset($filter['length']))
 //        {
-//            $data->skip($filter['start'])->limit($filter['length']);
+//            $dat  a->skip($filter['start'])->limit($filter['length']);
 //        }
 
         return [

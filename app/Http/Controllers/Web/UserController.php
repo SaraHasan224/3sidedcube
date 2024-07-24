@@ -29,12 +29,11 @@ class UserController extends Controller
      */
     public function index()
     {
-        try{
+        try {
             $data['USER_STATUS'] = Constant::USER_STATUS;
-            return view('users.index',$data);
-        }catch (\Exception $e){
+            return view('users.index', $data);
+        } catch (\Exception $e) {
             AppException::log($e);
-            return redirect()->back()->withErrors($e->getMessage());
             return ApiResponseHandler::failure(__('messages.general.failed'), $e->getMessage());
         }
     }
@@ -66,8 +65,7 @@ class UserController extends Controller
 
         $validationRule = User::getValidationRules('createUser', $requestData);
         $validator = Validator::make($requestData, $validationRule);
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             return ApiResponseHandler::validationError($validator->errors());
         }
         // Retrieve the validated input data...
@@ -81,10 +79,16 @@ class UserController extends Controller
         if ($state == Constant::CRUD_STATES['created']) {
             $user = new User();
             $user->password = Hash::make($validated['password']);
+            if(!array_key_exists('is_active', $validated)) {
+                $validated['is_active'] = Constant::POST_STATUS['InActive'];
+            }
         } else {
             $user = User::findById($id);
-            if(!empty($validated['password']) && $validated['password'] !== "password"){
+            if (!empty($validated['password']) && $validated['password'] !== "password") {
                 $user->password = Hash::make($validated['password']);
+            }
+            if(!array_key_exists('is_active', $validated)) {
+                $validated['is_active'] = Constant::No;
             }
         }
         try {
@@ -110,7 +114,7 @@ class UserController extends Controller
             $return['type'] = 'errors';
             $get_environment = env('APP_ENV', 'local');
 //            if ($get_environment == 'local') {
-                $return['message'] = $e->getMessage();
+            $return['message'] = $e->getMessage();
 //            } else {
 //                $return['message'] = "Oopss we are facing some hurdle right now to process this action, please try again";
 //            }
@@ -140,10 +144,9 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findById($id);
-        if(empty($user))
-        {
+        if (empty($user)) {
             return redirect('/users')->with('warning_msg', "Record not found.");
-        }else{
+        } else {
             $data['user'] = $user;
             $data['status'] = Constant::USER_STATUS;
             return view('users.edit', $data);
@@ -167,8 +170,7 @@ class UserController extends Controller
 
         $validationRule = User::getValidationRules('updateUser', $requestData);
         $validator = Validator::make($requestData, $validationRule);
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             return ApiResponseHandler::validationError($validator->errors());
         }
         // Retrieve the validated input data...
@@ -197,59 +199,71 @@ class UserController extends Controller
 
     private function makeDatatable($data)
     {
-        return DataTables::of($data['records'])
-            ->addColumn('check', function ($rowdata) {
-                $class = '';
-                $disabled = '';
-                if (!empty($rowdata->deleted_at))
-                {
-                    $disabled = 'disabled="disabled"';
-                }
-                return '<input type="checkbox" ' . $disabled . ' name="data_raw_id[]"  class="theClass ' . $class . '" value="' . $rowdata->id . '">';
-            })
-            ->addColumn('name', function ($rowdata) {
-                $disabledClass = "";
-                $url = url("/users/" . $rowdata->id.'/edit');
-                $target = "_blank";
-                return '<a target="'.$target.'" href="'.$url.'" class="'.$disabledClass.'" >' . $rowdata->name . '</a>';
-            })
-            ->addColumn('phone', function ($rowdata) {
-                return "+(".$rowdata->country_code.")".$rowdata->phone_number;
-            })
-            ->addColumn('user_type', function ($rowdata) {
-                $isActive = $rowdata->user_type;
-                $userStatus = array_flip(Constant::USER_TYPES);
-                return '<label class="badge badge-' . Constant::USER_TYPES_STYLE[$isActive] . '"> ' . $userStatus[$isActive] . '</label>';
-            })
-            ->addColumn('status', function ($rowdata) {
-                $isActive = $rowdata->status;
-                $isOppositeStatus = $rowdata->status == Constant::USER_STATUS['InActive'] ? Constant::USER_STATUS['Active'] : Constant::USER_STATUS['InActive'];
-                $userStatus = array_flip(Constant::USER_STATUS);
-                return '<label
-                    class="badge badge-' . Constant::USER_STATUS_STYLE[$isActive] . '"
-                    onClick="App.Users.changeStatus(' . $rowdata->id . ',' . $isOppositeStatus . ')"
-                > ' . $userStatus[$isActive] . '</label>';
-            })
-            ->addColumn('last_login', function ($rowdata) {
-                if(empty($rowdata->last_login))
-                    return null;
-                return Helper::dated_by(null,$rowdata->last_login);
-            })
-            ->addColumn('created_at', function ($rowdata) {
+        try {
+            return DataTables::of($data['records'])
+                ->addColumn('check', function ($rowdata) {
+                    $class = '';
+                    $disabled = '';
+                    if (!empty($rowdata->deleted_at)) {
+                        $disabled = 'disabled="disabled"';
+                    }
+                    return '<input type="checkbox" ' . $disabled . ' name="data_raw_id[]"  class="theClass ' . $class . '" value="' . $rowdata->id . '">';
+                })
+                ->addColumn('name', function ($rowdata) {
+                    $disabledClass = "";
+                    $url = url("/users/" . $rowdata->id . '/edit');
+                    $target = "_blank";
+                    return '<a target="' . $target . '" href="' . $url . '" class="' . $disabledClass . '" >' . $rowdata->name . '</a>';
+                })
+                ->addColumn('phone', function ($rowdata) {
+                    return "+(" . $rowdata->country_code . ")" . $rowdata->phone_number;
+                })
+                ->addColumn('user_type', function ($rowdata) {
+                    $isUserType = $rowdata->user_type;
+                    if(empty($isUserType)) {
+                        return $isUserType;
+                    }
+                    $userStatus = array_flip(Constant::USER_TYPES);
+                    return '<label class="badge badge-' . Constant::USER_TYPES_STYLE[$isUserType] . '"> ' . $userStatus[$isUserType] . '</label>';
+                })
+//                ->addColumn('status', function ($rowdata) {
+//                    $isActive = $rowdata->status;
+//                    $isOppositeStatus = $rowdata->status == Constant::USER_STATUS['InActive'] ? Constant::USER_STATUS['Active'] : Constant::USER_STATUS['InActive'];
+//                    $userStatus = array_flip(Constant::USER_STATUS);
+//                    return '<label
+//                    class="badge badge-' . Constant::USER_STATUS_STYLE[$isActive] . '"
+//                    onClick="App.Users.changeStatus(' . $rowdata->id . ',' . $isOppositeStatus . ')"
+//                > ' . $userStatus[$isActive] . '</label>';
+//                })
+                ->addColumn('last_login', function ($rowdata) {
+                    if (empty($rowdata->last_login))
+                        return null;
+                    return Helper::dated_by(null, $rowdata->last_login);
+                })
+                ->addColumn('created_at', function ($rowdata) {
 //                optional($rowdata->created_record)->name
-                return Helper::dated_by(null,$rowdata->created_at);
-            })
-            ->addColumn('updated_at', function ($rowdata) {
-                return Helper::dated_by(null,$rowdata->updated_at);
-            })
-            ->rawColumns(['check', 'name', 'user_type', 'status','created_at','updated_at'])
-            ->setOffset($data['offset'])
-            ->with([
-                "recordsTotal" => $data['count'],
-                "recordsFiltered" => $data['count'],
-            ])
-            ->setTotalRecords($data['count'])
-            ->make(true);
+                    return Helper::dated_by(null, $rowdata->created_at);
+                })
+                ->addColumn('status', function ($rowdata) {
+                    $isActive = !empty($rowdata->status) ? $rowdata->status : Constant::USER_STATUS['InActive'];
+                    $userStatus = array_flip(Constant::USER_STATUS);
+                    return '<label class="badge badge-' . Constant::USER_STATUS_STYLE[$isActive] . '"> ' . $userStatus[$isActive] . '</label>';
+                })
+                ->addColumn('updated_at', function ($rowdata) {
+                    return Helper::dated_by(null, $rowdata->updated_at);
+                })
+                ->rawColumns(['check', 'name', 'status', 'user_type', 'created_at', 'updated_at'])
+                ->setOffset($data['offset'])
+                ->with([
+                    "recordsTotal" => $data['count'],
+                    "recordsFiltered" => $data['count'],
+                ])
+                ->setTotalRecords($data['count'])
+                ->make(true);
+        } catch (\Exception $e) {
+            AppException::log($e);
+            dd($e->getTraceAsString());
+        }
     }
 
     /**
@@ -260,14 +274,12 @@ class UserController extends Controller
      */
     public function deleteAccount(Request $request)
     {
-        try
-        {
+        try {
             $requestData = $request->all();
             $validationErrors = Helper::validationErrors($request, [
                 'id' => 'required',
             ]);
-            if ($validationErrors)
-            {
+            if ($validationErrors) {
                 return ApiResponseHandler::validationError($validationErrors);
             }
             User::deleteAccount($requestData);
@@ -321,7 +333,7 @@ class UserController extends Controller
             $return['type'] = 'errors';
             $get_environment = env('APP_ENV', 'local');
             if ($get_environment == 'local') {
-             $return['message'] = $e->getMessage();
+                $return['message'] = $e->getMessage();
             } else {
                 $return['message'] = "Oopss we are facing some hurdle right now to process this action, please try again";
             }
