@@ -141,6 +141,13 @@ class PostController
      *                     type="string",
      *                     example=Null
      *                 ),
+     *                 @OA\Property(
+     *                     property="scheduled_at",
+     *                     description="The date and time the post is scheduled to be published",
+     *                     type="string",
+     *                     format="date-time",
+     *                     example="2024-08-01T12:00:00Z"
+     *                 ),
      *              )
      *         )
      *     ),
@@ -197,10 +204,21 @@ class PostController
             if (!array_key_exists('is_active', $validated)) {
                 $validated['is_active'] = Constant::POST_STATUS['Active'];
             }
+
+            // Handle scheduled_at
+            if (isset($requestData['scheduled_at']) && !empty($requestData['scheduled_at'])) {
+                $scheduledAt = \Carbon\Carbon::parse($requestData['scheduled_at']);
+                $requestData['scheduled_at'] = $scheduledAt;
+            }
+
             $post->title = $validated['title'];
             $post->author = $validated['author'];
             $post->content = $validated['content'];
             $post->status = $validated['is_active'] == 1 ? Constant::POST_STATUS['Active'] : Constant::POST_STATUS['InActive'];
+            // Handle scheduled_at
+            if (isset($validated['scheduled_at']) && !empty($validated['scheduled_at'])) {
+                $post->scheduled_at = $validated['scheduled_at'];
+            }
             if ((!$post->save())) {
                 throw new \Exception("Oopss we are facing some hurdle right now to process this action, please try again");
             }
@@ -269,6 +287,13 @@ class PostController
      *                     description="Content for the post",
      *                     type="string",
      *                     example=Null
+     *                 ),
+     *                 @OA\Property(
+     *                     property="scheduled_at",
+     *                     description="The date and time the post is scheduled to be published",
+     *                     type="string",
+     *                     format="date-time",
+     *                     example="2024-08-01T12:00:00Z"
      *                 ),
      *              )
      *         )

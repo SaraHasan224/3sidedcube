@@ -11,7 +11,14 @@ class Post extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    protected $fillable = ['title', 'content', 'author', 'status'];
+
+    protected $fillable = [
+        'title',
+        'author',
+        'content',
+        'status',
+        'scheduled_at',
+    ];
 
 
     public static $validationRules = [];
