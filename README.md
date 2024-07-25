@@ -39,7 +39,7 @@ My application dashboard  `http://localhost:8000/`
 My application registration  `http://localhost:8000/register`
 
 ### Swagger documentation
-Swagger documentation  `http://localhost:8000/api/documentation`
+Swagger documentation  `http://localhost:8000/v1/api/documentation`
 
 ### Real-time error tracking
 Used Sentry for real-time error tracking  `https://sentry.io/welcome`

@@ -193,6 +193,17 @@
                 ],
                 "summary": "get post details",
                 "operationId": "getPostDetails",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success"
@@ -232,6 +243,12 @@
                                         "description": "Content for the post",
                                         "type": "string",
                                         "example": null
+                                    },
+                                    "scheduled_at": {
+                                        "description": "The date and time the post is scheduled to be published",
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-08-01T12:00:00Z"
                                     }
                                 },
                                 "type": "object"
@@ -298,6 +315,12 @@
                                         "description": "Content for the post",
                                         "type": "string",
                                         "example": null
+                                    },
+                                    "scheduled_at": {
+                                        "description": "The date and time the post is scheduled to be published",
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2024-08-01T12:00:00Z"
                                     }
                                 },
                                 "type": "object"
