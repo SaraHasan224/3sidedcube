@@ -51,10 +51,11 @@ class PostController extends Controller
             $post->title = $validated['title'];
             $post->author = $validated['author'];
             $post->content = $validated['content'];
+            $post->status = $validated['is_active'] == 1 ? Constant::POST_STATUS['Active'] : Constant::POST_STATUS['InActive'];
             if(array_key_exists('scheduled_at', $validated)) {
                 $post->scheduled_at = Carbon::createFromFormat('Y-m-d H:i', $validated['scheduled_at']);
+                $post->status = Constant::POST_STATUS['Scheduled'];
             }
-            $post->status = $validated['is_active'] == 1 ? Constant::POST_STATUS['Active'] : Constant::POST_STATUS['InActive'];
             if ((!$post->save()))
             {
                 throw new \Exception("Oopss we are facing some hurdle right now to process this action, please try again");
