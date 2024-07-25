@@ -19,6 +19,9 @@
 
     <link href="{{ mix('css/main.css') }}" rel="stylesheet">
     <link href="{{ mix('css/init.css') }}" rel="stylesheet">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.0.0/sweetalert.min.js"></script>
     <script src="{{ mix('js/admin.js') }}"></script>
 {{--    <script src="{{ mix('js/main.js') }}"></script>--}}

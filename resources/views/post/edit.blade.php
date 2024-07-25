@@ -31,7 +31,7 @@
                 <section id="section1">
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12">
-                            <form id="customer_edit_form" class="newFormContainer" method="post" autocomplete="off">
+                            <form id="post_edit_form" class="newFormContainer" method="post" autocomplete="off">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6 formFieldsWrap">
@@ -74,22 +74,30 @@
                                         <div class="form-group switchFromGrp">
                                             <span class="defaultLabel">Status</span>
                                             <div class="custom-control custom-switch product-purchase-checkbox">
-                                                <input value="{{ !empty(old('is_active')) ? old('is_active') :  (!empty($post->status) ? $post->status : 1) }}"
-                                                       type="checkbox"
-                                                       @php
-                                                           $param = !empty(old('is_active')) ? old('is_active') :  (!empty($post->status) ? $post->status : 0);
-                                                           if($param == 1 ) {
-                                                                echo 'checked="checked"';
-                                                           }
-                                                       @endphp
-                                                       name="is_active"
-                                                       class="custom-control-input"
-                                                       id="chbox_is_active"
-                                                />
-
-                                                <label class="custom-control-label"
-                                                       for="chbox_is_active"></label>
+                                                <select
+                                                        name="is_active"
+                                                        class="form-control-sm form-control"
+                                                        @php
+                                                            $param = !empty(old('is_active')) ? old('is_active') :  (!empty($post->status) ? $post->status : 0);
+                                                            if($param == 1 ) {
+                                                                 echo 'checked="checked"';
+                                                            }
+                                                        @endphp
+                                                        value="{{ !empty(old('is_active')) ? old('is_active') :  (!empty($post->status) ? $post->status : 1) }}">
+                                                    @foreach($status as $key => $value)
+                                                        <option value="{{$value}}">{{$key}}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 formFieldsWrap">
+                                        <div class="form-group">
+                                            <label for="scheduled_at">Scheduled at *</label>
+                                            <input type="text" id="scheduled_at" name="scheduled_at">
+                                            @error('scheduled_at')
+                                            <em id="scheduled_at-error" class="error invalid-feedback">{{ $message }}</em>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-12 formFieldsWrap">
@@ -106,7 +114,7 @@
 
                                     <div class="col-md-12 form-group">
                                         <div class="insideButtons">
-                                            <button id="create-post" type="button" class="btn btn-primary text-right"><i class="icon-check-thin newMargin"></i>Save</button>
+                                            <button id="edit-post" type="button" class="btn btn-primary text-right"><i class="icon-check-thin newMargin"></i>Save</button>
                                         </div>
                                     </div>
                                 </div>
@@ -122,10 +130,15 @@
 @section('scripts')
     <script>
         $(document).ready(function () {
-            App.Post.initializePostValidations();
+//            App.Post.initializeEditPostValidations();
             var postId = "{{ $post->id }}";
             App.Post.editFormBinding(postId);
-            App.Helpers.getPhoneInput('create_phone', 'create_country_code', true, countryCode, phoneNumber)
-        })
+
+            // Initialize Flatpickr
+            flatpickr("#scheduled_at", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+            });
+    })
     </script>
 @endsection

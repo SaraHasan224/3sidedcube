@@ -31,8 +31,10 @@
     "dependencies": {
         "bootstrap": "^5.3.3",
         "datatables.net": "^2.1.0",
+        "flatpickr": "^4.6.13",
         "intl-tel-input": "^23.6.1",
         "jquery": "^3.7.1",
+        "jquery-ui": "^1.13.3",
         "moment": "^2.30.1",
         "owl.carousel": "^2.3.4"
     }

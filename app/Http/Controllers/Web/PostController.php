@@ -9,6 +9,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Post;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -50,6 +51,9 @@ class PostController extends Controller
             $post->title = $validated['title'];
             $post->author = $validated['author'];
             $post->content = $validated['content'];
+            if(array_key_exists('scheduled_at', $validated)) {
+                $post->scheduled_at = Carbon::createFromFormat('Y-m-d H:i', $validated['scheduled_at']);
+            }
             $post->status = $validated['is_active'] == 1 ? Constant::POST_STATUS['Active'] : Constant::POST_STATUS['InActive'];
             if ((!$post->save()))
             {
@@ -95,6 +99,7 @@ class PostController extends Controller
      */
     public function edit($id)
     {
+        $data['status'] = Constant::POST_STATUS;
         $post = Post::findById($id);
         if(empty($post))
         {
@@ -118,7 +123,8 @@ class PostController extends Controller
         // Check if the incoming request is valid...
         $requestData = $request->all();
 
-        $validationRule = Customer::getValidationRules('update', $requestData);
+        $requestData['post_id'] = $id;
+        $validationRule = Post::getValidationRules('update', $requestData);
         $validator = Validator::make($requestData, $validationRule);
         if ($validator->fails())
         {
@@ -185,6 +191,9 @@ class PostController extends Controller
             ->addColumn('created_at', function ($rowdata) {
                 return Helper::dated_by(null,$rowdata->created_at);
             })
+            ->addColumn('scheduled_at', function ($rowdata) {
+                return Helper::dated_by(null,$rowdata->scheduled_at);
+            })
             ->addColumn('updated_at', function ($rowdata) {
                 return Helper::dated_by(null,$rowdata->updated_at);
             })
@@ -193,7 +202,8 @@ class PostController extends Controller
                 'id',
                 'status',
                 'created_at',
-                'updated_at'
+                'updated_at',
+                'scheduled_at'
             ])
             ->setOffset($data['offset'])
             ->with([

@@ -74,21 +74,20 @@
                                         <div class="form-group switchFromGrp">
                                             <span class="defaultLabel">Status</span>
                                             <div class="custom-control custom-switch product-purchase-checkbox">
-                                                <input value="{{ !empty(old('is_active')) ? old('is_active') :  (!empty($post->status) ? $post->status : 0) }}"
-                                                       type="checkbox"
-                                                       @php
-                                                           $param = !empty(old('is_active')) ? old('is_active') :  (!empty($post->status) ? $post->status : 0);
-                                                           if($param == 1 ) {
-                                                                echo 'checked="checked"';
-                                                           }
-                                                       @endphp
-                                                       name="is_active"
-                                                       class="custom-control-input"
-                                                       id="chbox_is_active"
-                                                />
-
-                                                <label class="custom-control-label"
-                                                       for="chbox_is_active"></label>
+                                                <select
+                                                        name="is_active"
+                                                        class="form-control-sm form-control"
+                                                        @php
+                                                            $param = !empty(old('is_active')) ? old('is_active') :  (!empty($post->status) ? $post->status : 0);
+                                                            if($param == 1 ) {
+                                                                 echo 'checked="checked"';
+                                                            }
+                                                        @endphp
+                                                        value="{{ !empty(old('is_active')) ? old('is_active') :  (!empty($post->status) ? $post->status : 1) }}">
+                                                    @foreach($status as $key => $value)
+                                                        <option value="{{$value}}">{{$key}}</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                         </div>
                                     </div>

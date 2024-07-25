@@ -35,7 +35,8 @@ class Post extends Model
             'update'        => [
                 'title'  => 'required|max:255|string|unique:posts,title,'. $postId,
                 'author' => 'required|max:255|string',
-                'content' => 'required'
+                'content' => 'required',
+                'scheduled_at' => 'nullable'
             ],
             'delete'        => [
                 'id'  => 'required|numeric|exists:posts,id',
@@ -94,7 +95,7 @@ class Post extends Model
 
     public static function getByFilters($filter)
     {
-        $data = self::select('id', 'author', 'title', 'status', 'created_at','updated_at','deleted_at');
+        $data = self::select('id', 'author', 'title', 'status', 'created_at','updated_at','deleted_at', 'scheduled_at');
         $data = $data->withTrashed()->orderBy('id', 'DESC');
 
         if (count($filter))

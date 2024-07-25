@@ -1,6 +1,8 @@
 import $ from "jquery";
 import 'bootstrap';
 import axios from 'axios';
+import flatpickr from 'flatpickr';
+
 
 window.$ = window.jQuery = $;
 

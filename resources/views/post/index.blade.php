@@ -61,6 +61,7 @@
                     <th>Status</th>
                     <th>Created At</th>
                     <th>Updated At</th>
+                    <th>Scheduled At</th>
                 </tr>
                 </thead>
                 <tbody>

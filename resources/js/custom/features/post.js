@@ -51,6 +51,55 @@ App.Post = {
             }
         });
     },
+    initializeEditPostValidations: function () {
+        $("#post_edit_form").validate({
+            rules: {
+                title: {
+                    required: true,
+                    maxlength: 255
+                },
+                author: {
+                    required: true,
+                    maxlength: 255
+                },
+                content: {
+                    required: true
+                }
+            },
+            messages: {
+                title: {
+                    required: "The title field is required.",
+                    maxlength: "The title may not be greater than 255 characters."
+                },
+                author: {
+                    required: "The title field is required.",
+                    maxlength: "The title may not be greater than 255 characters."
+                },
+                content: {
+                    required: "The content field is required."
+                }
+            },
+            errorElement: "em",
+            errorPlacement: function(error, element) {
+                error.addClass("invalid-feedback");
+                if (element.prop("type") === "checkbox") {
+                    error.insertAfter(element.next("label"));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass("is-invalid").removeClass("is-valid");
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass("is-invalid").addClass("is-valid");
+            },
+            invalidHandler: function(event, validator) {
+                // Add a class to the form when there are validation errors
+                $("#post_edit_form").addClass("has-errors");
+            }
+        });
+    },
     removeFilters: function () {
         $("#title").val("");
         $("#author_name").val("");
@@ -80,6 +129,7 @@ App.Post = {
             {data: "status", name: "status", orderable: true, searchable: true},
             {data: "created_at", name: "created_at", orderable: true, searchable: true},
             {data: "updated_at", name: "updated_at", orderable: true, searchable: true},
+            {data: "scheduled_at", name: "scheduled_at", orderable: true, searchable: true},
         ];
         let postData = function (d) {
             d.id = $("#id").val();
@@ -121,7 +171,7 @@ App.Post = {
         });
     },
     editFormBinding: function (id) {
-        $("#create-post").bind("click", function (e) {
+        $("#edit-post").bind("click", function (e) {
             App.Post.initializePostValidations();
             if (!$(this).valid()) {
                 App.Post.initializePostValidations();
@@ -141,7 +191,7 @@ App.Post = {
                         App.Helpers.showSuccessMessage( data.message );
                     }
                 };
-                let requestData = $("#post_create_form").serialize();
+                let requestData = $("#post_edit_form").serialize();
                 App.Ajax.post(url, requestData, onSuccess, false, {});
             }
             // if ($("#post_create_form").valid()) {
