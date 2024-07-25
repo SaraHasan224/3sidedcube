@@ -14,7 +14,7 @@ class PublishScheduledPosts extends Command
      *
      * @var string
      */
-    protected $signature = 'app:publish-scheduled-posts';
+    protected $signature = 'publish-scheduled';
 
     /**
      * The console command description.

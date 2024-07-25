@@ -45,11 +45,23 @@ Swagger documentation  `http://localhost:8000/api/documentation`
 Used Sentry for real-time error tracking  `https://sentry.io/welcome`
 
 ### API EndPoints
-##### User
-* User GET `http://localhost:8000/api/v1/user`
+##### Auth
+* Register POST `http://localhost:8000/v1/register`
+* Login POST `http://localhost:8000/v1/login`
+##### Customer
+* User GET `http://localhost:8000/v1/customer`
 ##### Post
-* Post GET All `http://localhost:8000/api/v1/posts`
-* Post GET Single `http://localhost:8000/api/v1/posts/1`
-* Post POST Create `http://localhost:8000/api/v1/posts`
-* Post PUT Update `http://localhost:8000/api/v1/posts/1`
-* Post DELETE destroy `http://localhost:8000/api/v1/posts/1`
+* Manage Posts - GET All `http://localhost:8000/v1/all-posts` 
+* Get post details - GET Single `http://localhost:8000/v1/post/{id}`
+* Add New Post - POST Create `http://localhost:8000/v1/post/add`
+* Edit Post - POST Update `http://localhost:8000/v1/post/edit/{id}`
+* Delete Post - POST destroy `http://localhost:8000/v1/post/delete/{id} `
+
+##### Test
+run the following command to execute test cases
+###### `php artisan test`
+
+
+##### Scheduler
+run the following command to schedule posts
+###### `php artisan publish-scheduled`
